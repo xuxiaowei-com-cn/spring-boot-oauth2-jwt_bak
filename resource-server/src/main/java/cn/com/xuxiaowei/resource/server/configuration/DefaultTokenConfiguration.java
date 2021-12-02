@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -31,6 +32,24 @@ public class DefaultTokenConfiguration {
     }
 
     /**
+     * {@link KeyPair} {@link Bean}
+     * <p>
+     * 在 {@link KeyPair} 对应的 {@link Bean} 不存在时，才会创建此 {@link Bean}
+     *
+     * @return 在 {@link KeyPair} 对应的 {@link Bean} 不存在时，才会返回此 {@link Bean}
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public KeyPair keyPair() {
+        KeyProperties.KeyStore keyStore = keyProperties.getKeyStore();
+        Resource location = keyStore.getLocation();
+        String alias = keyStore.getAlias();
+        String password = keyStore.getPassword();
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(location, password.toCharArray());
+        return keyStoreKeyFactory.getKeyPair(alias, password.toCharArray());
+    }
+
+    /**
      * 加密 Token {@link Bean}
      * <p>
      * 在 {@link JwtAccessTokenConverter} 对应的 {@link Bean} 不存在时，才会创建此 {@link Bean}
@@ -39,19 +58,10 @@ public class DefaultTokenConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+    public JwtAccessTokenConverter jwtAccessTokenConverter(KeyPair keyPair) {
         // 加密 Token
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-
-        KeyProperties.KeyStore keyStore = keyProperties.getKeyStore();
-        Resource location = keyStore.getLocation();
-        String alias = keyStore.getAlias();
-        String password = keyStore.getPassword();
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(location, password.toCharArray());
-        KeyPair keyPair = keyStoreKeyFactory.getKeyPair(alias, password.toCharArray());
-
         jwtAccessTokenConverter.setKeyPair(keyPair);
-
         return jwtAccessTokenConverter;
     }
 
@@ -61,6 +71,7 @@ public class DefaultTokenConfiguration {
      * 在 {@link ResourceServerTokenServices} 实现类对应的 {@link Bean} 不存在时，才会创建此 {@link Bean}
      *
      * @return 在 {@link ResourceServerTokenServices} 实现类对应的 {@link Bean} 不存在时，才会返回此 {@link Bean}
+     * @see ResourceServerSecurityConfigurer#tokenServices(ResourceServerTokenServices) 可缺省
      */
     @Bean
     @ConditionalOnMissingBean
