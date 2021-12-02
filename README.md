@@ -9,4 +9,4 @@ Spring Boot OAuth2 JWT
 
 ## 分支
 
-- [Jwt_Token](./tree/Jwt_Token)
+- [Jwt_Token](https://github.com/xuxiaowei-com-cn/spring-boot-oauth2-jwt/tree/Jwt_Token)
