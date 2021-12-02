@@ -7,12 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import javax.sql.DataSource;
 import java.security.KeyPair;
 
 /**
@@ -26,16 +24,9 @@ public class DefaultTokenConfiguration {
 
     private KeyProperties keyProperties;
 
-    private DataSource dataSource;
-
     @Autowired
     public void setKeyProperties(KeyProperties keyProperties) {
         this.keyProperties = keyProperties;
-    }
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     /**
@@ -73,16 +64,15 @@ public class DefaultTokenConfiguration {
     }
 
     /**
-     * JDBC Token 缓存
+     * Jwt Token 缓存
      * 在 {@link TokenStore} 对应的 {@link Bean} 不存在时，才会创建此 {@link Bean}
      *
      * @return 在 {@link TokenStore} 对应的 {@link Bean} 不存在时，才会返回此 {@link Bean}
-     * @see JwtTokenStore Jwt Token 缓存
      */
     @Bean
     @ConditionalOnMissingBean
-    public TokenStore tokenStore() {
-        return new JdbcTokenStore(dataSource);
+    public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
+        return new JwtTokenStore(jwtAccessTokenConverter);
     }
 
 }
