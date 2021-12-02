@@ -1,10 +1,10 @@
-package cn.com.xuxiaowei;
+package cn.com.xuxiaowei.authorization.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringBootOauth2JwtApplicationTests {
+class AuthorizationServerApplicationTests {
 
     @Test
     void contextLoads() {
