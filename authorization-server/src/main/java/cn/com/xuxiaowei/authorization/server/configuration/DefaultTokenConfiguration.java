@@ -1,17 +1,18 @@
 package cn.com.xuxiaowei.authorization.server.configuration;
 
-import cn.com.xuxiaowei.authorization.server.properties.KeyProperties;
+import cn.com.xuxiaowei.authorization.server.properties.RsaKeyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  * 默认 Token 配置
@@ -22,11 +23,11 @@ import java.security.KeyPair;
 @Configuration
 public class DefaultTokenConfiguration {
 
-    private KeyProperties keyProperties;
+    private RsaKeyProperties rsaKeyProperties;
 
     @Autowired
-    public void setKeyProperties(KeyProperties keyProperties) {
-        this.keyProperties = keyProperties;
+    public void setRsaKeyProperties(RsaKeyProperties rsaKeyProperties) {
+        this.rsaKeyProperties = rsaKeyProperties;
     }
 
     /**
@@ -38,13 +39,10 @@ public class DefaultTokenConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public KeyPair keyPair() {
-        KeyProperties.KeyStore keyStore = keyProperties.getKeyStore();
-        Resource location = keyStore.getLocation();
-        String alias = keyStore.getAlias();
-        String password = keyStore.getPassword();
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(location, password.toCharArray());
-        return keyStoreKeyFactory.getKeyPair(alias, password.toCharArray());
+    public KeyPair keyPair() throws InvalidKeyException {
+        RSAPublicKey rsaPublicKey = rsaKeyProperties.rsaPublicKey();
+        RSAPrivateKey rsaPrivateKey = rsaKeyProperties.rsaPrivateKey();
+        return new KeyPair(rsaPublicKey, rsaPrivateKey);
     }
 
     /**
