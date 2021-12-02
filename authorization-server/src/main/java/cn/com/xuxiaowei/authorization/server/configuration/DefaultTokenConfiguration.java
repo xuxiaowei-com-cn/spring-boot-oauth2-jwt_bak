@@ -48,7 +48,7 @@ public class DefaultTokenConfiguration {
         RSAPublicKey rsaPublicKey = rsaKeyProperties.rsaPublicKey();
         jwtAccessTokenConverter.setSigner(new RsaSigner(rsaPrivateKey));
         // 可省略公钥
-        // jwtAccessTokenConverter.setVerifier(new RsaVerifier(rsaPublicKey));
+        jwtAccessTokenConverter.setVerifier(new RsaVerifier(rsaPublicKey));
         return jwtAccessTokenConverter;
     }
 
