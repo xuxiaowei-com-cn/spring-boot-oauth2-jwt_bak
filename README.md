@@ -13,9 +13,9 @@ Spring Boot OAuth2 JWT
 
 ## 分支
 
-- [Jwt_Token](https://github.com/xuxiaowei-com-cn/spring-boot-oauth2-jwt/tree/Jwt_Token)
+- [Jwt_Token](https://github.com/xuxiaowei-com-cn/spring-boot-oauth2-jwt_bak/tree/Jwt_Token)
 
 ![Jwt_Token](./png/Jwt_Token.png)
 
-- [Jwt_Token_RSA](https://github.com/xuxiaowei-com-cn/spring-boot-oauth2-jwt/tree/Jwt_Token_RSA)
+- [Jwt_Token_RSA](https://github.com/xuxiaowei-com-cn/spring-boot-oauth2-jwt_bak/tree/Jwt_Token_RSA)
     - 直接使用 RSA 公钥与私钥配置，更方便管理（集成微服务时放在配置中心）
